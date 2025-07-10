@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Audit Logs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    form.search-form {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 220px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button, .reset-link {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .reset-link {
+      background-color: #ddd;
+      color: #333;
+      text-decoration: none;
+    }
+
+    .reset-link:hover {
+      background-color: #bbb;
+    }
+
+    .clear-form {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .clear-form button {
+      background-color: #dc3545;
+      margin-top: 10px;
+    }
+
+    .clear-form button:hover {
+      background-color: #b52a37;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .no-results {
+      text-align: center;
+      color: #888;
+      padding: 20px;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .back-link a {
+      text-decoration: none;
+      color: #007bff;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Audit Logs</h2>
+
+    <!-- Search Bar -->
+    <form method="get" class="search-form">
+      <input type="text" name="doctor_id" placeholder="Search by Doctor ID" value="{{ doctor_search }}">
+      <input type="text" name="query" placeholder="Search by Query" value="{{ query_search }}">
+      <button type="submit">🔍 Search</button>
+      <a href="{% url 'audit_logs' %}" class="reset-link">Reset</a>
+    </form>
+
+    <!-- Clear Logs Button -->
+    <form action="{% url 'clear_audit_logs' %}" method="post" class="clear-form">
+      {% csrf_token %}
+      <button type="submit" onclick="return confirm('Are you sure you want to clear all audit logs?');">
+        🧹 Clear Audit Logs
+      </button>
+    </form>
+
+    <!-- Log Table -->
+    <table>
+      <thead>
+        <tr>
+          <th>Doctor ID</th>
+          <th>Search Query</th>
+          <th>Results Found</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+          <tr>
+            <td>{{ log.doctor.doctor_id }}</td>
+            <td>{{ log.query }}</td>
+            <td>{{ log.matched_records }}</td>
+            <td>{{ log.searched_at }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="no-results">No logs found for this search.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="back-link">
+      <p><a href="{% url 'admin_dashboard' %}">← Back to Admin Dashboard</a></p>
+    </div>
+  </div>
+</body>
+</html>

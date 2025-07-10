@@ -1,0 +1,208 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Configure Access - {{ excel_file.file.name }}</title>
+  <style>
+    body {
+      background-color: #f4f6f9;
+      font-family: Arial, sans-serif;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    form.search-form {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 300px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .search-btn {
+      padding: 10px 15px;
+      margin-left: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    .search-btn:hover {
+      background-color: #0056b3;
+      cursor: pointer;
+    }
+
+    fieldset {
+      margin-bottom: 25px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    legend {
+      font-weight: bold;
+      padding: 0 10px;
+      color: #333;
+      font-size: 16px;
+    }
+
+    .doctor-entry {
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed #ddd;
+    }
+
+    label {
+      display: inline-block;
+      margin-right: 15px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 5px;
+    }
+
+    .submit-btn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 12px 25px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+    }
+
+    .submit-btn:hover {
+      background-color: #0056b3;
+      cursor: pointer;
+    }
+
+    .back-link {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .back-link a {
+      text-decoration: none;
+      color: #007bff;
+    }
+
+    .back-link a:hover {
+      text-decoration: underline;
+      color: #0056b3;
+    }
+
+    .copy-btn {
+      font-size: 12px;
+      padding: 5px 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .copy-btn:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Configure Access: <em>{{ excel_file.file.name }}</em></h2>
+
+    <!-- Search bar for doctors -->
+    <form method="get" class="search-form">
+      <input type="text" name="search" placeholder="Search doctor by ID..." value="{{ search_query }}">
+      <button type="submit" class="search-btn">Search</button>
+      {% if search_query %}
+        <a href="{% url 'publish_excel' excel_file.id %}" class="search-btn" style="background-color: #6c757d;">Reset</a>
+      {% endif %}
+    </form>
+
+
+    <form method="POST">
+      {% csrf_token %}
+
+      {% regroup doctors by doctor_id|slice:":2" as grouped_doctors %}
+      {% for group in grouped_doctors %}
+        <fieldset>
+          <legend>Group: {{ group.grouper|group_fullname }}</legend>
+
+          {% for doctor in group.list %}
+            <div class="doctor-entry">
+              <strong>{{ doctor.doctor_id }}</strong>
+              <button type="button" class="copy-btn" onclick="copyToGroup('{{ doctor.doctor_id }}', '{{ group.grouper }}')">
+                Copy to {{ group.grouper|group_fullname }}
+              </button>
+              <br>
+              {% for column in columns %}
+                <label>
+                  <input type="checkbox"
+                         class="checkbox {{ group.grouper }} {{ doctor.doctor_id }}"
+                         name="doctor_{{ doctor.id }}_columns"
+                         value="{{ column }}"
+                         {% with access=access_data|get_item:doctor.id %}
+                           {% if access and column in access.allowed_columns %}
+                             checked
+                           {% endif %}
+                         {% endwith %}
+                  > {{ column }}
+                </label>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </fieldset>
+      {% endfor %}
+
+      <button type="submit" class="submit-btn">Save Access</button>
+    </form>
+
+    <div class="back-link">
+      <p><a href="{% url 'admin_dashboard' %}">← Back to Admin Dashboard</a></p>
+    </div>
+  </div>
+
+  <script>
+    function copyToGroup(sourceDoctorId, groupPrefix) {
+      const sourceBoxes = document.querySelectorAll(`input.${groupPrefix}.${sourceDoctorId}`);
+      const selected = [];
+      sourceBoxes.forEach(cb => {
+        if (cb.checked) selected.push(cb.value);
+      });
+
+      const allBoxes = document.querySelectorAll(`input.${groupPrefix}`);
+      allBoxes.forEach(cb => {
+        const isSameDoctor = cb.classList.contains(sourceDoctorId);
+        if (!isSameDoctor) {
+          cb.checked = selected.includes(cb.value);
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add New User</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9fafb;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 25px;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 8px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .nav-link {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .nav-link a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    .nav-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>➕ Add New User</h2>
+
+    <div class="nav-link">
+      <a href="{% url 'manage_users' %}">← Back to User List</a>
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <label>
+        Doctor ID:
+        <input type="text" name="doctor_id" required>
+      </label>
+
+      <label>
+        Password:
+        <input type="text" name="password" required>
+      </label>
+
+      <label>
+        <input type="checkbox" name="is_admin"> Is Admin
+      </label>
+
+      <button type="submit">Create User</button>
+    </form>
+  </div>
+
+</body>
+</html>

@@ -1,14 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
 {% load custom_filters %}
-
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Doctor Dashboard</title>
+  <title>Patient Dashboard</title>
   <style>
     body {
       background-color: #f4f6f9;
       font-family: Arial, sans-serif;
       padding: 40px;
+    }
+
+    body {
+      background: url("{% static 'images/llmhospital.png' %}") no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(255, 255, 255, 0.6); /* Adjust opacity here */
+      z-index: -1;
     }
 
     .container {
@@ -118,14 +136,6 @@
     {% if results %}
       <h3>Search Results</h3>
       <table>
-        <thead>
-          <tr>
-            {% for col in columns %}
-              <th>{{ col }}</th>
-            {% endfor %}
-            <th>Timeline</th>
-          </tr>
-        </thead>
         <tbody>
           {% for row in results %}
             <tr>
@@ -147,3 +157,4 @@
   </div>
 </body>
 </html>
+{% endblock %}

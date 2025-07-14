@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render, redirect
 from .models import Doctor, ExcelFile, ExcelAccess
 import pandas as pd
@@ -111,7 +112,7 @@ def doctor_dashboard(request):
     error = None
     query = ""
 
-    sensitive_fields = ['Social Security Number', 'Driver\'s License', 'Credit Card Number']
+    sensitive_fields = ['Social Security Number', 'Driver\'s License', 'Credit Card Number', 'Policy Amount']
 
     if request.method == 'POST':
         query = request.POST['query'].strip().lower()
@@ -147,6 +148,17 @@ def doctor_dashboard(request):
                 for col in sensitive_fields:
                     if col in df_filtered.columns:
                         df_filtered[col] = df_filtered[col].apply(mask_sensitive_value)
+
+                # 🧮 Convert DOB to Age
+                if 'Date of Birth' in df_filtered.columns:
+                    try:
+                        current_year = datetime.now().year
+                        df_filtered['Age'] = df_filtered['Date of Birth'].astype(str).str[:4].astype(int)
+                        df_filtered['Age'] = df_filtered['Age'].apply(lambda y: current_year - y if 1900 <= y <= current_year else "")
+                        df_filtered.drop(columns=['Date of Birth'], inplace=True)
+                    except Exception as e:
+                        error = f"Error calculating Age from DOB: {str(e)}"
+
 
                 # ✅ Only add non-empty columns
                 for col in df_filtered.columns:

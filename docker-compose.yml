@@ -8,8 +8,10 @@ services:
     volumes:
       - .:/app
       - media_volume:/app/media
+      - static_volume:/app/staticfiles  # 👈 Add this
     environment:
       - DEBUG=True
 
 volumes:
   media_volume:
+  static_volume:  # 👈 Add this

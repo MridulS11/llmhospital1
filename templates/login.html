@@ -1,3 +1,6 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,6 +17,22 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+    }
+
+    body {
+      background: url("{% static 'images/llmhospital.png' %}") no-repeat center center fixed;
+      background-size: cover;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(255, 255, 255, 0.6); /* Adjust opacity here */
+      z-index: -1;
     }
 
     .hospital-name {
@@ -106,3 +125,4 @@
 
 </body>
 </html>
+{% endblock %}

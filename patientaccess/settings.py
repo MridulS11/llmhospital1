@@ -139,3 +139,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # required for collectstatic
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'patientaccess', 'static'),
+]
+
+# 👇 Used in production for `collectstatic`
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

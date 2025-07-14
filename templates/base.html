@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}LLM Hospital{% endblock %}</title>
+  <style>
+    .logo-container {
+      position: fixed;
+      top: 20px;
+      left: 30px;
+      z-index: 999;
+    }
+
+    .logo-container img {
+      height: 100px; /* Adjust size here */
+      width: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo-container">
+    <img src="{% static 'images/llmlogo.png' %}" alt="LLM Hospital Logo">
+  </div>
+
+  {% block content %}{% endblock %}
+</body>
+</html>

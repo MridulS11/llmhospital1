@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
+<td>{{ log.local_time }}</td>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +14,7 @@
     }
 
     body {
-      background: url("{% static 'images/llmhospital.png' %}") no-repeat center center fixed;
+      background: url("{% static 'images/image1.png' %}") no-repeat center center fixed;
       background-size: cover;
       position: relative;
     }

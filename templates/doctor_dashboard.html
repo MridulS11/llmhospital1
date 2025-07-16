@@ -14,7 +14,7 @@
     }
 
     body {
-      background: url("{% static 'images/llmhospital.png' %}") no-repeat center center fixed;
+      background: url("{% static 'images/image1.png' %}") no-repeat center center fixed;
       background-size: cover;
       position: relative;
     }
@@ -121,7 +121,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>Doctor Dashboard</h2>
+    <h2>Patient Detail Dashboard</h2>
 
     <form method="POST">
       {% csrf_token %}
@@ -135,24 +135,26 @@
 
     {% if results %}
       <h3>Search Results</h3>
-      <table>
-        <tbody>
-          {% for row in results %}
+      <div style="overflow-x: auto; max-width: 100%;">
+        <table border="1" cellpadding="5" cellspacing="0" style="min-width: 1000px;">
+          <thead>
             <tr>
               {% for col in columns %}
-                <td>{{ row|get_item:col|default:"—" }}</td>
+                <th>{{ col }}</th>
               {% endfor %}
-              <td>
-                {% if row.Patient_Card_Number %}
-                  <a href="{% url 'patient_detail' row.Patient_Card_Number %}">View Timeline</a>
-                {% else %}
-                  —
-                {% endif %}
-              </td>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for row in results %}
+              <tr>
+                {% for col in columns %}
+                  <td>{{ row|get_item:col|default:"—" }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% endif %}
   </div>
 </body>

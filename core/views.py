@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 import os
+from pytz import timezone
+from django.utils.timezone import localtime
 
 def login_view(request):
     if request.method == 'POST':
@@ -235,7 +237,6 @@ def audit_logs(request):
 
     logs = AuditLog.objects.select_related('doctor').order_by('-searched_at')
 
-    # Get search input
     doctor_search = request.GET.get('doctor_id', '').strip().lower()
     query_search = request.GET.get('query', '').strip().lower()
 
@@ -244,6 +245,10 @@ def audit_logs(request):
 
     if query_search:
         logs = logs.filter(query__icontains=query_search)
+
+    coral_harbour = timezone('America/Coral_Harbour')
+    for log in logs:
+        log.local_time = localtime(log.searched_at, coral_harbour).strftime("%Y-%m-%d %H:%M:%S")
 
     return render(request, 'audit_logs.html', {
         'logs': logs,
